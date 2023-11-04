@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { Rubik } from 'next/font/google'
+import { Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
-const rubik = Rubik({ subsets: ['latin'] })
+
+const grotesk = Space_Grotesk({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={rubik.className}>{children}</body>
+      <body className={grotesk.className}>{children}</body>
     </html>
   )
 }
