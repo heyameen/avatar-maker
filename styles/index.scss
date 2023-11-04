@@ -1,11 +1,11 @@
-@import 'src/styles/var';
+@import './variables';
 
 html,
 body {
   height: 100%;
   margin: 0;
   font-size: 16px;
-  font-family: Rubik, ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+  font-family: grotesk, ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
   scroll-behavior: smooth;
