@@ -3,7 +3,7 @@
 import { Container, Sidebar } from '@/layouts';
 import { useAvatarOption } from '@/hooks';
 
-import styles from './page.module.scss'
+import './page.scss'
 import "../styles/index.scss"
 
 
@@ -12,7 +12,7 @@ export default function Home() {
 
 
   return (
-    <main className={styles.main}>
+    <main className="main">
       <Container avatarOption={avatarOption} setAvatarOption={setAvatarOption} />
       <Sidebar avatarOption={avatarOption} setAvatarOption={setAvatarOption} />
     </main>

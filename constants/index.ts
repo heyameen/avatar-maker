@@ -17,6 +17,16 @@ export const SCREEN = {
   lg: 976,
 } as const;
 
+export const TRIGGER_PROBABILITY = 0.1;
+export const NOT_COMPATIBLE_AGENTS = [
+  "quark",
+  "micromessenger",
+  "weibo",
+  "douban",
+] as const;
+export const DOWNLOAD_DELAY = 800;
+
+
 export const SETTINGS: Readonly<AvatarSettings> = {
   gender: [Gender.Male, Gender.Female],
 
@@ -93,3 +103,61 @@ export const AVATAR_LAYER: Readonly<{
     zIndex: 80,
   },  
 };
+
+export const SPECIAL_AVATARS: Readonly<AvatarOption[]> = [
+  {
+    wrapperShape: "squircle",
+    background: {
+      color: "linear-gradient(62deg, #8EC5FC, #E0C3FC)",
+    },
+    widgets: {
+      face: {
+        shape: FaceShape.Base,
+        fillColor: "#8C5A2B",
+      },
+      hair: {
+        shape: HairShape.HalfShaved,
+        fillColor: "#21625A",
+      },
+      accessories: {
+        shape: AccessoriesShape.FaceMask,
+      },
+      eyes: {
+        shape: EyesShape.Wink,
+      },
+      mouth: {
+        shape: SmilesShape.OpenedSmile,
+      },
+      beard: {
+        shape: NONE,
+      },
+    },
+  },
+  {
+    wrapperShape: "squircle",
+    background: {
+      color: "#fd6f5d",
+    },
+    widgets: {
+      face: {
+        shape: FaceShape.Base,
+        fillColor: "#F9C9B6",
+      },
+      hair: {
+        shape: HairShape.BowlCut,
+      },
+      accessories: {
+        shape: NONE,
+      },
+      eyes: {
+        shape: EyesShape.Normal,
+      },
+      mouth: {
+        shape: SmilesShape.AwkwardSmile,
+      },
+      beard: {
+        shape: NONE,
+      },
+    },
+  },
+];

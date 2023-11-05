@@ -67,5 +67,6 @@ export interface AppState {
 }
 
 export interface AppActions {
-  setAvatarOption: (newOption: AvatarOption) => void;
+    setAvatarOption: (newOption: AvatarOption) => void;
+    setSidebarStatus: (isCollapsed: boolean) => void;
 }

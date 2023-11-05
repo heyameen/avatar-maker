@@ -54,7 +54,7 @@ const useStore = create<AppState & AppActions>((set, get) => ({
     }
   },
 
-  setSiderStatus: (isCollapsed: boolean) => {
+  setSidebarStatus: (isCollapsed: boolean) => {
     set(() => ({ isCollapsed }));
   },
 }));

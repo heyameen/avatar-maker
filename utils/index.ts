@@ -1,5 +1,5 @@
 import { AvatarOption, None } from "@/types";
-import { AVATAR_LAYER, NONE, SETTINGS } from "@/constants";
+import { AVATAR_LAYER, NONE, SETTINGS, SPECIAL_AVATARS } from "@/constants";
 import {
   BeardShape,
   AccessoriesShape,
@@ -112,4 +112,8 @@ export function getRandomAvatarOption(
   };
 
   return avatarOption;
+}
+
+export function getSpecialAvatarOption(): AvatarOption {
+  return SPECIAL_AVATARS[Math.floor(Math.random() * SPECIAL_AVATARS.length)];
 }
