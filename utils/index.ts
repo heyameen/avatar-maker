@@ -7,6 +7,8 @@ import {
   HairShape,
   WidgetType,
 } from "@/enums";
+import { previewData } from "./assets-data";
+
 
 function getRandomValue<Item = unknown>(
   arr: Item[],
@@ -97,15 +99,15 @@ export function getRandomAvatarOption(
           avoid: [useOption.widgets?.eyes?.shape],
         }),
       },    
-      mouth: {
-        shape: getRandomValue(SETTINGS.smilesShape, {
-          avoid: [useOption.widgets?.mouth?.shape],
+      smile: {
+        shape: getRandomValue(SETTINGS.smileShape, {
+          avoid: [useOption.widgets?.smile?.shape],
         }),
       },
       beard: {
         shape: beardShape,
         ...(beardShape === BeardShape.Beard || BeardShape.Fuzz
-          ? { zIndex: AVATAR_LAYER["mouth"].zIndex - 1 }
+          ? { zIndex: AVATAR_LAYER["smile"].zIndex - 1 }
           : undefined),
       },      
     },
@@ -113,6 +115,26 @@ export function getRandomAvatarOption(
 
   return avatarOption;
 }
+
+export const getWidgets = async (widgetType: WidgetType) => {
+  const list = SETTINGS[`${widgetType}Shape`];
+  const promises: Promise<string>[] = list.map(async (widget: string) => {
+    if (widget !== "none" && previewData?.[widgetType]?.[widget]) {
+      return (await previewData[widgetType][widget]()).default;
+    }
+    return "X";
+  });
+  const svgRawList = await Promise.all(promises).then((raw) => {
+    return raw.map((svgRaw, i) => {
+      return {
+        widgetType,
+        widgetShape: list[i],
+        svgRaw,
+      };
+    });
+  });
+  return svgRawList;
+};
 
 export function getSpecialAvatarOption(): AvatarOption {
   return SPECIAL_AVATARS[Math.floor(Math.random() * SPECIAL_AVATARS.length)];

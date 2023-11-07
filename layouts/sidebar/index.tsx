@@ -4,6 +4,8 @@ import React from 'react'
 import IconRight from '@/assets/icons/icon-right.svg';
 import { useSideBar } from '@/hooks';
 import { Configurator } from '@/components';
+import styles from './style.module.scss'
+
 
 
 
@@ -17,12 +19,12 @@ const Sidebar = (props: IProps) => {
 
     const { isCollapsed, openSidebar, closeSidebar } = useSideBar();
     return (
-        <aside className={`sider ${isCollapsed ? 'collapsed' : ''}`}>
+        <aside className={`${styles.sider} ${isCollapsed ? styles.collapsed : ''}`}>
 
             <Configurator avatarOption={avatarOption} setAvatarOption={setAvatarOption} />
 
-            <div className='trigger' onClick={isCollapsed ? () => openSidebar(false) : () => closeSidebar(true)}>
-                <Image src={IconRight} className='icon-right' alt='arrow' />
+            <div className={styles.trigger} onClick={isCollapsed ? () => openSidebar(false) : () => closeSidebar(true)}>
+                <Image src={IconRight} className={styles.iconRight} alt='arrow' />
             </div>
         </aside>
     )

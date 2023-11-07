@@ -1,12 +1,15 @@
 import { AvatarOption } from '@/types';
+import { Scrollbar } from '@/components';
 
 interface IProps {
     avatarOption: AvatarOption
     setAvatarOption: (newOption: AvatarOption) => void
 }
-export default function Configurator(props: IProps) {
+const Configurator = (props: IProps) =>  {
     const { avatarOption, setAvatarOption } = props;
     return (
-        <h5>Scrollbar</h5>
+        <Scrollbar avatarOption={avatarOption} setAvatarOption={setAvatarOption} />
     )
 }
+
+export default Configurator;

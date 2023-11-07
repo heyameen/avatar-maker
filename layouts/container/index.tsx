@@ -3,9 +3,10 @@
 import { useRef, useState } from 'react';
 import { AvatarOption } from '@/types'
 import { getRandomAvatarOption, getSpecialAvatarOption } from '@/utils';
-import { TRIGGER_PROBABILITY, NOT_COMPATIBLE_AGENTS, DOWNLOAD_DELAY} from '@/constants';
+import { TRIGGER_PROBABILITY, NOT_COMPATIBLE_AGENTS, DOWNLOAD_DELAY } from '@/constants';
 import { Header, Footer } from '@/layouts';
 import styles from './style.module.scss';
+import { Avatar } from '@/components';
 
 
 interface IProps {
@@ -48,7 +49,7 @@ const Container = (props: IProps) => {
                 })
                 const dataURL = canvas.toDataURL();
                 if (notCompatible) {
-                    
+
                 } else {
                     const trigger = document.createElement('a');
                     trigger.href = dataURL;
@@ -69,10 +70,14 @@ const Container = (props: IProps) => {
             <div className='content-wrapper'>
                 <div className='content-view'>
                     <Header />
-
                     <div className='playground'>
-                        <div className='avatar-wrapper'>                            
-                            <h5>avatar</h5>avatar
+                        <div className='avatar-wrapper'>
+                            <Avatar
+                                colorAvatarRef={colorAvatarRef}
+                                option={avatarOption}
+                                size={280}
+                                style={{ transform: `rotateY(${flipped ? -180 : 0}deg)` }}
+                            />
                         </div>
 
                         <h5>action bar</h5>

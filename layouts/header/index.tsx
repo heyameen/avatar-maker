@@ -1,6 +1,6 @@
+import Image from 'next/image';
 import IconGitHub from '@/assets/icons/icon-github.svg';
 import styles from './style.module.scss'
-import Image from 'next/image';
 
 const Header = () => {
     return (

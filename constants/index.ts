@@ -35,7 +35,7 @@ export const SETTINGS: Readonly<AvatarSettings> = {
   hairShape: Object.values(HairShape),
   accessoriesShape: Object.values(AccessoriesShape),
   eyesShape: Object.values(EyesShape),
-  smilesShape: Object.values(SmilesShape),
+  smileShape: Object.values(SmilesShape),
   beardShape: Object.values(BeardShape),
 
   commonColors: [
@@ -83,17 +83,14 @@ export const AVATAR_LAYER: Readonly<{
 }> = {
   [WidgetType.Face]: {
     zIndex: 10,
-  },
-  [WidgetType.Ear]: {
-    zIndex: 102,
-  },
+  },  
   [WidgetType.Accessories]: {
     zIndex: 103,
   },
   [WidgetType.Eyes]: {
     zIndex: 50,
   },  
-  [WidgetType.Mouth]: {
+  [WidgetType.Smile]: {
     zIndex: 100,
   },
   [WidgetType.Beard]: {
@@ -125,7 +122,7 @@ export const SPECIAL_AVATARS: Readonly<AvatarOption[]> = [
       eyes: {
         shape: EyesShape.Wink,
       },
-      mouth: {
+      smile: {
         shape: SmilesShape.OpenedSmile,
       },
       beard: {
@@ -152,7 +149,7 @@ export const SPECIAL_AVATARS: Readonly<AvatarOption[]> = [
       eyes: {
         shape: EyesShape.Normal,
       },
-      mouth: {
+      smile: {
         shape: SmilesShape.AwkwardSmile,
       },
       beard: {

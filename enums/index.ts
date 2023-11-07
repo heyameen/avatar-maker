@@ -13,9 +13,8 @@ export const enum ActionType {
 export enum WidgetType {
   Face = "face",
   Hair = "hair",
-  Ear = "ear",
   Accessories = "accessories",
-  Mouth = "mouth",
+  Smile = "smile",
   Eyes = "eyes",
   Beard = "beard",
 }
@@ -87,3 +86,11 @@ export enum BeardShape {
   Fuzz = "fuzz",
   Goatee = "goatee",
 }
+
+export type WidgetShape =
+  | FaceShape
+  | HairShape
+  | AccessoriesShape
+  | EyesShape
+  | SmilesShape
+  | BeardShape

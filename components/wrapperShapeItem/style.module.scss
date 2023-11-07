@@ -1,0 +1,32 @@
+@import '@/styles/variables';
+
+
+.wrapperShape {
+    display: flex;
+    align-items: center;
+
+    .wrapperShapeItem {
+      padding: 0.4rem 0.5rem;
+      cursor: pointer;
+
+      .shape {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: $color-text;
+        transition: background-color 0.2s;
+
+        &.circle {
+          border-radius: 50%;
+        }
+
+        &.squircle {
+          border-radius: 20%;
+        }
+
+        &.active {
+          background-color: $color-accent;
+        }
+      }
+    }
+  }

@@ -1,0 +1,80 @@
+@import "@/styles/variables";
+
+.colorList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  .colorListItem {
+    position: relative;
+    z-index: 1;
+    width: calc(100% / 7);
+    padding: 0.6rem 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    .bgColor {
+      position: relative;
+      box-sizing: content-box;
+      width: 1.3em;
+      height: 1.3em;
+      margin: 0 auto;
+      font-size: 16px;
+      border-radius: 50%;
+      box-shadow: 0 0 0.05em 0.2em $color-configurator;
+
+      &.transparent {
+        background: #fff !important;
+
+        &::after {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          z-index: 1;
+          color: #ff4757;
+          font-weight: bold;
+          font-size: 1.8rem;
+          transform: translate(-50%, -50%) scale(0.5);
+          opacity: 1;
+          content: "\\";
+        }
+      }
+
+      &::before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        background: inherit;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.5;
+        transition: width 0.15s, height 0.15s;
+        content: "";
+      }
+
+      &::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 1;
+        color: $color-configurator;
+        font-size: 1.5rem;
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+        transition: opacity 0.15s;
+        content: "\2714";
+      }
+
+      &.active::before {
+        width: 160%;
+        height: 160%;
+      }
+
+      &.active::after {
+        opacity: 1;
+      }
+    }
+  }
+}
