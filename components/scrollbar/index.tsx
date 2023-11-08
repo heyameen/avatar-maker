@@ -41,7 +41,37 @@ const Scrollbar = (props: IProps) => {
             });
             setSections(updatedSections);
         })();
+        
+        
     }, []);
+
+     useEffect(() => {
+        const fetchSvgContent = async () => {
+            const sectionsWithSvg = await Promise.all(
+                sections.map(async (section) => {
+                    const widgetsWithSvg = await Promise.all(
+                        section.widgetList.map(async (widget) => {
+                            try {
+                                const svgResponse = await fetch(widget.svgRaw.src);
+                                const svgContent = await svgResponse.text();
+                                return { ...widget, svgRaw: svgContent };
+                            } catch (error) {
+                                console.error("Error fetching SVG:", error);
+                                return widget; // Return the original widget if the fetch fails
+                            }
+                        })
+                    );
+                    return { ...section, widgetList: widgetsWithSvg };
+                })
+            );
+            setSections(sectionsWithSvg);
+        };
+
+        if (sections.some(section => section.widgetList.some(widget => typeof widget.svgRaw === 'object'))) {
+            fetchSvgContent();
+        }
+    }, [sections]);
+
 
     const onSetWidgetColor = (widgetType: WidgetType, fillColor: string) => {
         if (avatarOption.widgets?.[widgetType]) {
@@ -74,6 +104,7 @@ const Scrollbar = (props: IProps) => {
                 },
             })
         }
+        console.log('AVATAR OPTION', avatarOption)
     }
     const getWidgetColor = (type: string) => {
         if (
@@ -127,7 +158,7 @@ const Scrollbar = (props: IProps) => {
                                         key={it.widgetShape}
                                         className={`${styles.listItem} ${it.widgetShape === avatarOption.widgets?.[s.widgetType]?.shape ? styles.selected : ''}`}
                                         onClick={() => onSetSwitchWidget(s.widgetType, it.widgetShape)}
-                                        dangerouslySetInnerHTML={{ __html: it.svgRaw.src }}
+                                        dangerouslySetInnerHTML={{ __html: it.svgRaw }}
                                     />
                                         
                                 )

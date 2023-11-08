@@ -126,7 +126,7 @@ export const SPECIAL_AVATARS: Readonly<AvatarOption[]> = [
         shape: SmilesShape.OpenedSmile,
       },
       beard: {
-        shape: NONE,
+        shape: BeardShape.Beard,
       },
     },
   },
@@ -144,7 +144,7 @@ export const SPECIAL_AVATARS: Readonly<AvatarOption[]> = [
         shape: HairShape.BowlCut,
       },
       accessories: {
-        shape: NONE,
+        shape: AccessoriesShape.Mustache,
       },
       eyes: {
         shape: EyesShape.Normal,
@@ -153,7 +153,7 @@ export const SPECIAL_AVATARS: Readonly<AvatarOption[]> = [
         shape: SmilesShape.AwkwardSmile,
       },
       beard: {
-        shape: NONE,
+        shape: BeardShape.Fuzz,
       },
     },
   },

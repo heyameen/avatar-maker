@@ -54,7 +54,7 @@ export function getRandomAvatarOption(
       BeardShape.Beard,
       BeardShape.Fuzz,
       BeardShape.Goatee,
-      BeardShape.Goatee
+      BeardShape.Mustache
     );
     HairList = SETTINGS.hairShape.filter((shape) => !HairList.includes(shape));
   }

@@ -29,7 +29,8 @@ const Avatar = (props: AvatarProps) => {
             const getWidgetSvg = async (widgetType: WidgetType, opt: Widget<WidgetShape>) => {
                 if (opt.shape !== NONE && widgetData?.[widgetType]?.[opt.shape]) {
                     console.log(await widgetData[widgetType][opt.shape]())
-                    return (await widgetData[widgetType][opt.shape]()).default;
+                    const response = await fetch(`${(await widgetData[widgetType][opt.shape]()).default.src}`);
+                    return response.text();
                 }
                 return '';
             };
@@ -39,8 +40,8 @@ const Avatar = (props: AvatarProps) => {
             });
 
             const svgRawList = await Promise.all(promises);
+            console.log('SVG RAW LIST', svgRawList)
             let skinColor: string | undefined;
-            console.log('svgContent', svgRawList)
 
             const svgElements = svgRawList.map((svgContent, i) => {
                 if (!svgContent) {
@@ -56,26 +57,33 @@ const Avatar = (props: AvatarProps) => {
                     skinColor = widgetFillColor;
                 }
 
+                const isFaceWidget = sortedList[i][0] === WidgetType.Face;
+                const faceTransform = isFaceWidget ? 'translate(130, 230)' : ''; // Adjust the Y value as needed.
+
                 const svgXmlContent = svgContent
                     .slice(svgContent.indexOf('>', svgContent.indexOf('<svg')) + 1)
                     .replace('</svg>', '')
                     .replaceAll('$fillColor', widgetFillColor || 'transparent');
 
-                return `<g id="avatar-${sortedList[i][0]}">${svgXmlContent}</g>`;
-            });
+                const transformAttribute = isFaceWidget ? `transform="${faceTransform}"` : '';
 
+
+                return `<g id="avatar-${sortedList[i][0]}" ${transformAttribute}>${svgXmlContent}</g>`;
+            });
+            console.log('LER', svgElements)
+            // -110 -180
             setSvgContent(`
-                <svg
-                width="${avatarSize}"
-                height="${avatarSize}"
-                viewBox="0 0 ${avatarSize / 0.7} ${avatarSize / 0.7}"
-                preserveAspectRatio="xMidYMax meet"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                <svg        
+                    width="${avatarSize}"
+                    height="${avatarSize}"        
+                    viewBox="0 0 ${avatarSize * 6} ${avatarSize * 6}"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="xMidYMid meet"
                 >
-                <g transform='translate(100, 65)'>
-                    ${svgElements.join('')}
-                </g>
+                    <g transform="translate(100, -180)"> 
+                        ${svgElements.join('')}
+                    </g>
                 </svg>
             `);
         })();
@@ -96,9 +104,8 @@ const Avatar = (props: AvatarProps) => {
         return shapeClassNames[shape as WrapperShape];
     });
 
-
     return (
-        <div className={`${styles.avatar} ${trueShape ? styles[trueShape] : null}`} ref={colorAvatarRef} style={{ width: avatarSize, height: avatarSize, ...style }}>
+        <div className={`${styles.avatar} ${ trueShape ? styles[trueShape] : ''}`} ref={colorAvatarRef} style={{ width: avatarSize, height: avatarSize, ...style }}>
             <Background color={avatarOption.background.color} />
             <div className={styles.avatarPayload} dangerouslySetInnerHTML={{ __html: svgContent }}></div>
         </div>
