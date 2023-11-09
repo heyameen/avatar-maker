@@ -24,8 +24,10 @@ export type AvatarWidgets = {
   hair: Widget<HairShape>;
   accessories: Widget<AccessoriesShape>;
   eyes: Widget<EyesShape>;
-  mouth: Widget<SmilesShape>;
+  smile: Widget<SmilesShape>;
   beard: Widget<BeardShape>;
+
+  [key: string]: any;
 };
 
 export interface AvatarSettings {
@@ -36,9 +38,8 @@ export interface AvatarSettings {
   hairShape: HairShape[];
   accessoriesShape: AccessoriesShape[];
   eyesShape: EyesShape[];
-  beardShape: BeardShape[];  
-  smilesShape: SmilesShape[]
-  
+  beardShape: BeardShape[];
+  smileShape: SmilesShape[];
 
   commonColors: string[];
   skinColors: string[];
@@ -68,4 +69,5 @@ export interface AppState {
 
 export interface AppActions {
   setAvatarOption: (newOption: AvatarOption) => void;
+  setSidebarStatus: (isCollapsed: boolean) => void;
 }

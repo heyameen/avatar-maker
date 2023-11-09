@@ -1,3 +1,4 @@
 import useAvatarOption from "./useAvatarOption";
+import useSideBar from './useSidebar';
 
-export { useAvatarOption };
+export { useAvatarOption, useSideBar };
