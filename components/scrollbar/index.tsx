@@ -57,7 +57,7 @@ const Scrollbar = (props: IProps) => {
                                 return { ...widget, svgRaw: svgContent };
                             } catch (error) {
                                 console.error("Error fetching SVG:", error);
-                                return widget; // Return the original widget if the fetch fails
+                                return widget; 
                             }
                         })
                     );
@@ -124,7 +124,7 @@ const Scrollbar = (props: IProps) => {
                     <WrapperShapeItem avatarOption={avatarOption} setAvatarOption={setAvatarOption} />
                 </SectionWrapper>
 
-                <SectionWrapper title='border color'>
+                <SectionWrapper title='background color'>
                     <ColorList avatarOption={avatarOption} setAvatarOption={setAvatarOption} />
                 </SectionWrapper>
                 {sections.map((s) => (
