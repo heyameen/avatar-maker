@@ -59,6 +59,7 @@ export interface AvatarOption {
 }
 
 export interface AppState {
+  flipped: boolean;
   history: {
     past: AvatarOption[];
     present: AvatarOption;
@@ -70,4 +71,7 @@ export interface AppState {
 export interface AppActions {
   setAvatarOption: (newOption: AvatarOption) => void;
   setSidebarStatus: (isCollapsed: boolean) => void;
+  setFlipped: (flipped: boolean) => void;
+  undo: () => void;
+  redo: () => void;
 }

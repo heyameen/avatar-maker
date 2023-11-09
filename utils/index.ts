@@ -1,5 +1,5 @@
 import { AvatarOption, None } from "@/types";
-import { AVATAR_LAYER, NONE, SETTINGS, SPECIAL_AVATARS } from "@/constants";
+import { AVATAR_LAYER, NONE, SETTINGS, SPECIAL_AVATARS, SCREEN } from "@/constants";
 import {
   BeardShape,
   AccessoriesShape,
@@ -139,3 +139,11 @@ export const getWidgets = async (widgetType: WidgetType) => {
 export function getSpecialAvatarOption(): AvatarOption {
   return SPECIAL_AVATARS[Math.floor(Math.random() * SPECIAL_AVATARS.length)];
 }
+
+
+export const initializeCollapsedState = () => {
+  if (typeof window !== "undefined") {
+    return window.innerWidth <= SCREEN.lg;
+  }
+  return false;
+};

@@ -6,7 +6,7 @@ import { getRandomAvatarOption, getSpecialAvatarOption } from '@/utils';
 import { TRIGGER_PROBABILITY, NOT_COMPATIBLE_AGENTS, DOWNLOAD_DELAY } from '@/constants';
 import { Header, Footer } from '@/layouts';
 import styles from './style.module.scss';
-import { Avatar } from '@/components';
+import { ActionBar, Avatar } from '@/components';
 
 
 interface IProps {
@@ -80,7 +80,7 @@ const Container = (props: IProps) => {
                             />
                         </div>
 
-                        <h5>action bar</h5>
+                        <ActionBar />
 
                         <div className='action-group'>
                             <button

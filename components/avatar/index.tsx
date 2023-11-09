@@ -45,7 +45,6 @@ const Avatar = (props: AvatarProps) => {
 
             const svgElements = svgRawList.map((svgContent, i) => {
                 if (!svgContent) {
-                    // Handle the error for this widget.
                     console.error(`SVG content for widget ${sortedList[i][0]} not found.`);
                     return '';
                 }
@@ -58,30 +57,35 @@ const Avatar = (props: AvatarProps) => {
                 }
 
                 const isFaceWidget = sortedList[i][0] === WidgetType.Face;
-                const faceTransform = isFaceWidget ? 'translate(130, 230)' : ''; // Adjust the Y value as needed.
+                const isCurlyShort = avatarOption.widgets.hair?.shape === 'curlyShort'
 
+                const faceTransform = isFaceWidget ? 'translate(130, 230)' : '';
+                const hairTransform = 'isFroBun' ? 'translate(20, -95)' : '';
+                const curlYbOB = 'isCurlyBob' ? 'translate(-55, 20)' : '';
                 const svgXmlContent = svgContent
                     .slice(svgContent.indexOf('>', svgContent.indexOf('<svg')) + 1)
                     .replace('</svg>', '')
                     .replaceAll('$fillColor', widgetFillColor || 'transparent');
 
-                const transformAttribute = isFaceWidget ? `transform="${faceTransform}"` : '';
+                const transformFace = isFaceWidget ? `transform="${faceTransform}"` : '';
+                const transformHair = isCurlyShort ? `transform="${hairTransform}"` : '';
 
 
-                return `<g id="avatar-${sortedList[i][0]}" ${transformAttribute}>${svgXmlContent}</g>`;
+
+
+                return `<g id="avatar-${sortedList[i][0]}" ${transformFace}>${svgXmlContent}</g>`;
             });
-            console.log('LER', svgElements)
-            // -110 -180
+
             setSvgContent(`
                 <svg        
                     width="${avatarSize}"
                     height="${avatarSize}"        
-                    viewBox="0 0 ${avatarSize * 6} ${avatarSize * 6}"
+                    viewBox="0 0 ${avatarSize * 6.6} ${avatarSize * 6.6}"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     preserveAspectRatio="xMidYMid meet"
                 >
-                    <g transform="translate(100, -180)"> 
+                    <g transform="translate(100, 95)"> 
                         ${svgElements.join('')}
                     </g>
                 </svg>
@@ -105,7 +109,7 @@ const Avatar = (props: AvatarProps) => {
     });
 
     return (
-        <div className={`${styles.avatar} ${ trueShape ? styles[trueShape] : ''}`} ref={colorAvatarRef} style={{ width: avatarSize, height: avatarSize, ...style }}>
+        <div className={`${styles.avatar} ${trueShape ? styles[trueShape] : ''}`} ref={colorAvatarRef} style={{ width: avatarSize, height: avatarSize, ...style }}>
             <Background color={avatarOption.background.color} />
             <div className={styles.avatarPayload} dangerouslySetInnerHTML={{ __html: svgContent }}></div>
         </div>
