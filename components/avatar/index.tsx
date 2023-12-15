@@ -40,12 +40,12 @@ const Avatar = (props: AvatarProps) => {
             });
 
             const svgRawList = await Promise.all(promises);
-            console.log('SVG RAW LIST', svgRawList)
+            // console.log('SVG RAW LIST', svgRawList)
             let skinColor: string | undefined;
 
             const svgElements = svgRawList.map((svgContent, i) => {
                 if (!svgContent) {
-                    console.error(`SVG content for widget ${sortedList[i][0]} not found.`);
+                    // console.error(`SVG content for widget ${sortedList[i][0]} not found.`);
                     return '';
                 }
 
@@ -107,6 +107,8 @@ const Avatar = (props: AvatarProps) => {
     const trueShape = Object.keys(shapeClassNames).find((shape: string) => {
         return shapeClassNames[shape as WrapperShape];
     });
+
+    console.log('BACJD', avatarOption)
 
     return (
         <div className={`${styles.avatar} ${trueShape ? styles[trueShape] : ''}`} ref={colorAvatarRef} style={{ width: avatarSize, height: avatarSize, ...style }}>

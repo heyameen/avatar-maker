@@ -10,7 +10,7 @@ import {
 import { previewData } from "./assets-data";
 
 
-function getRandomValue<Item = unknown>(
+export function getRandomValue<Item = unknown>(
   arr: Item[],
   {
     avoid = [],
@@ -28,7 +28,6 @@ function getRandomValue<Item = unknown>(
 
   const randomIdx = Math.floor(Math.random() * finalArr.length);
   const randomValue = finalArr[randomIdx];
-
   return randomValue;
 }
 
@@ -72,13 +71,7 @@ export function getRandomAvatarOption(
     gender,
     wrapperShape: presetOption?.wrapperShape || getRandomValue(SETTINGS.wrapperShape),
     background: {
-      color: getRandomValue(SETTINGS.backgroundColor, {
-        avoid: [
-          useOption.background?.color,
-          (hairShape === HairShape.WavyBob ) &&
-            hairColor, // Handle special cases and prevent color conflicts.
-        ],
-      }),
+      color: '#fc909f'
     },
     widgets: {
       face: {

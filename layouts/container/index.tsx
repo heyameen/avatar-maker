@@ -1,12 +1,13 @@
 "use client"
 
 import { useRef, useState } from 'react';
-import { AvatarOption } from '@/types'
+import { AppState, AvatarOption } from '@/types'
 import { getRandomAvatarOption, getSpecialAvatarOption } from '@/utils';
 import { TRIGGER_PROBABILITY, NOT_COMPATIBLE_AGENTS, DOWNLOAD_DELAY } from '@/constants';
 import { Header, Footer } from '@/layouts';
 import styles from './style.module.scss';
 import { ActionBar, Avatar } from '@/components';
+import useStore from '@/store';
 
 
 interface IProps {
@@ -16,7 +17,10 @@ interface IProps {
 
 const Container = (props: IProps) => {
     const { avatarOption, setAvatarOption } = props;
-    const [flipped, setFlipped] = useState(false);
+    const { flipped } = useStore((state) => ({
+        flipped: state.flipped
+    }));
+    
     const [downloading, setDownloading] = useState(false);
     const colorAvatarRef = useRef<HTMLDivElement>(null);
     const onRandomAvatar = () => {
