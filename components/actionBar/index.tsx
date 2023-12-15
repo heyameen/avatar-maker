@@ -8,12 +8,17 @@ import styles from './style.module.scss';
 
 
 const ActionBar = () => {
-    const { flipped, setFlipped, undo, redo } = useStore((state) => ({
+    const { flipped, setFlipped, undo, redo, history } = useStore((state) => ({
         flipped: state.flipped,
         setFlipped: state.setFlipped,
         undo: state.undo,
         redo: state.redo,
+        history: state.history,
     }));
+
+    const canUndo = history.past.length > 0;
+    const canRedo = history.future.length > 0;
+
 
     const handleActionClick = (actionType: string) => {
         switch (actionType) {
@@ -35,13 +40,13 @@ const ActionBar = () => {
             type: 'undo',
             icon: IconBack,
             tip: 'Undo',
-            disabled: true,
+            disabled: !canUndo,
         },
         {
             type: 'redo',
             icon: IconNext,
             tip: 'Redo',
-            disabled: true,
+            disabled: !canRedo,
         },
         {
             type: 'flip',
