@@ -1,11 +1,12 @@
 $color-accent: hsl(241, 99%, 70%);
 $color-primary: $color-accent;
 $color-secondary: hsl(186, 84%, 74%);
-$color-text: hsl(211, 19%, 70%);
+$color-text: white;
 $color-dark: #111827;
-$color-gray: lighten($color-dark, 5);
-$color-page-bg: darken($color-dark, 5);
-$color-configurator: $color-dark;
+$color-gunmetal:#120309;
+$color-gray: darken(#31304D, 5);
+$color-page-bg: darken(#161A30, 5);
+$color-configurator: #31304D;
 $color-stroke: $color-text;
 
 $layout-header-height: 6rem;

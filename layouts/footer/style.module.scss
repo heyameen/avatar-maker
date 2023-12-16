@@ -1,0 +1,12 @@
+.footer{
+    display: flex;
+    justify-content: center;
+    font-size: small;
+
+    .link{
+        text-decoration: underline;
+    }
+    .divider{
+        margin: 0 1rem;
+    }
+}
