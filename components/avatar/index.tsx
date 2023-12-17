@@ -40,12 +40,10 @@ const Avatar = (props: AvatarProps) => {
             });
 
             const svgRawList = await Promise.all(promises);
-            // console.log('SVG RAW LIST', svgRawList)
             let skinColor: string | undefined;
 
             const svgElements = svgRawList.map((svgContent, i) => {
                 if (!svgContent) {
-                    // console.error(`SVG content for widget ${sortedList[i][0]} not found.`);
                     return '';
                 }
 
@@ -61,19 +59,19 @@ const Avatar = (props: AvatarProps) => {
 
                 const faceTransform = isFaceWidget ? 'translate(130, 230)' : '';
                 const hairTransform = 'isFroBun' ? 'translate(20, -95)' : '';
-                const curlYbOB = 'isCurlyBob' ? 'translate(-55, 20)' : '';
+                const curlYbOB = 'isCurlyBob' ? 'translate(-55, 20)' : '';                
+
                 const svgXmlContent = svgContent
                     .slice(svgContent.indexOf('>', svgContent.indexOf('<svg')) + 1)
                     .replace('</svg>', '')
-                    .replaceAll('$fillColor', widgetFillColor || 'transparent');
+                    .replaceAll(/\$fillColor/g, skinColor || 'transparent');
 
                 const transformFace = isFaceWidget ? `transform="${faceTransform}"` : '';
                 const transformHair = isCurlyShort ? `transform="${hairTransform}"` : '';
 
 
-
-
                 return `<g id="avatar-${sortedList[i][0]}" ${transformFace}>${svgXmlContent}</g>`;
+                
             });
 
             setSvgContent(`
@@ -107,8 +105,6 @@ const Avatar = (props: AvatarProps) => {
     const trueShape = Object.keys(shapeClassNames).find((shape: string) => {
         return shapeClassNames[shape as WrapperShape];
     });
-
-    console.log('BACJD', avatarOption)
 
     return (
         <div className={`${styles.avatar} ${trueShape ? styles[trueShape] : ''}`} ref={colorAvatarRef} style={{ width: avatarSize, height: avatarSize, ...style }}>

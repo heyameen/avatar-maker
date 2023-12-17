@@ -16,6 +16,7 @@ const sectionList = Object.values(WidgetType);
 
 const Scrollbar = (props: IProps) => {
     const { avatarOption, setAvatarOption } = props;
+    const [updatedSvgContent, setUpdatedSvgContent] = useState(new Map());
     const scrollWrapper = useRef(null);
     const [sections, setSections] = useState<{
         widgetType: WidgetType
@@ -70,7 +71,61 @@ const Scrollbar = (props: IProps) => {
         if (sections.some(section => section.widgetList.some(widget => typeof widget.svgRaw === 'object'))) {
             fetchSvgContent();
         }
-    }, [sections]);
+     }, [sections]);
+    
+    useEffect(() => {
+        // Function to update SVG content with selected color
+        const updateSvgContentColor = (widgetType: WidgetType, fillColor: string) => {
+            return sections.map(section => {
+                if (section.widgetType === widgetType) {
+                    return {
+                        ...section,
+                        widgetList: section.widgetList.map(widget => {
+                            const parser = new DOMParser();
+                            const xmlDoc = parser.parseFromString(widget.svgRaw, "image/svg+xml");
+                            const paths = xmlDoc.querySelectorAll('path');
+                            paths.forEach(path => {
+                                // Update fill color
+                                path.setAttribute('fill', fillColor);
+                            });
+                            const serializer = new XMLSerializer();
+                            return {
+                                ...widget,
+                                svgRaw: serializer.serializeToString(xmlDoc.documentElement),
+                            };
+                        })
+                    };
+                }
+                return section;
+            });
+        };
+
+        // Updating SVGs whenever avatarOption changes
+        const updatedSections = sections.map(section => {
+            return {
+                ...section,
+                widgetList: section.widgetList.map(widget => {
+                    if (avatarOption.widgets?.[section.widgetType]?.fillColor) {
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(widget.svgRaw, "image/svg+xml");
+                        const paths = xmlDoc.querySelectorAll('path');
+                        paths.forEach(path => {
+                            const fillColor = avatarOption.widgets[section.widgetType]?.fillColor ?? '';
+                            path.setAttribute('fill', fillColor);
+                        });
+                        const serializer = new XMLSerializer();
+                        return {
+                            ...widget,
+                            svgRaw: serializer.serializeToString(xmlDoc.documentElement),
+                        };
+                    }
+                    return widget;
+                })
+            };
+        });
+        setSections(updatedSections);
+
+    }, [avatarOption, sections]);
 
 
     const onSetWidgetColor = (widgetType: WidgetType, fillColor: string) => {
@@ -104,8 +159,8 @@ const Scrollbar = (props: IProps) => {
                 },
             })
         }
-        console.log('AVATAR OPTION', avatarOption)
     }
+
     const getWidgetColor = (type: string) => {
         if (
             type === WidgetType.Face ||
