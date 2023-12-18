@@ -1,18 +1,27 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { SectionWrapper, ColorList, WrapperShapeItem } from '@/components';
-import { AvatarOption, AvatarWidgets } from '@/types';
+import { AvatarOption } from '@/types';
 import { BeardShape, WidgetShape, WidgetType } from '@/enums';
 import { getWidgets } from '@/utils';
 import { AVATAR_LAYER, SETTINGS } from '@/constants';
 
 import styles from './style.module.scss'
+import { widgetData } from '@/utils/assets-data';
 
 interface IProps {
     avatarOption: AvatarOption
     setAvatarOption: (newOption: AvatarOption) => void
 }
+
+interface WidgetListType {
+    widgetType: WidgetType
+    widgetShape: WidgetShape
+    svgRaw: any
+}
+
 const sectionList = Object.values(WidgetType);
+const DEFAULT_COLOR = '#C99C62';
 
 const Scrollbar = (props: IProps) => {
     const { avatarOption, setAvatarOption } = props;
@@ -20,33 +29,41 @@ const Scrollbar = (props: IProps) => {
     const scrollWrapper = useRef(null);
     const [sections, setSections] = useState<{
         widgetType: WidgetType
-        widgetList: {
-            widgetType: WidgetType
-            widgetShape: WidgetShape
-            svgRaw: any
-        }[]
+        widgetList: WidgetListType[]
     }[]>([]);
 
+    
     useEffect(() => {
+        const fetchAndUpdateSvg = async (widget: WidgetListType) => {
+            let svgContent = '';
+
+            if (typeof widget.svgRaw === 'object' && widget.svgRaw.src) {
+                // Fetch SVG content if svgRaw is an object with a src property
+                const response = await fetch(widget.svgRaw.src);
+                svgContent = await response.text();
+            } else if (typeof widget.svgRaw === 'string') {
+                // Directly use the string if svgRaw is already a string
+                svgContent = widget.svgRaw;
+            }
+
+            // Replace $fillColor with default color
+            return { ...widget, svgRaw: svgContent.replaceAll(/\$fillColor/g, DEFAULT_COLOR) };
+        };
+
         (async () => {
-            const a = await Promise.all(
-                sectionList.map((section) => {
-                    return getWidgets(section);
+            const updatedSections = await Promise.all(
+                sectionList.map(async section => {
+                    const widgets = await getWidgets(section);
+                    const updatedWidgets = await Promise.all(widgets.map(fetchAndUpdateSvg));
+                    return { widgetType: section, widgetList: updatedWidgets };
                 })
             );
-            const updatedSections = sectionList.map((li, i) => {
-                return {
-                    widgetType: li,
-                    widgetList: a[i],
-                };
-            });
+
             setSections(updatedSections);
         })();
-        
-        
     }, []);
 
-     useEffect(() => {
+    useEffect(() => {
         const fetchSvgContent = async () => {
             const sectionsWithSvg = await Promise.all(
                 sections.map(async (section) => {
@@ -58,7 +75,7 @@ const Scrollbar = (props: IProps) => {
                                 return { ...widget, svgRaw: svgContent };
                             } catch (error) {
                                 console.error("Error fetching SVG:", error);
-                                return widget; 
+                                return widget;
                             }
                         })
                     );
@@ -71,62 +88,7 @@ const Scrollbar = (props: IProps) => {
         if (sections.some(section => section.widgetList.some(widget => typeof widget.svgRaw === 'object'))) {
             fetchSvgContent();
         }
-     }, [sections]);
-    
-    useEffect(() => {
-        // Function to update SVG content with selected color
-        const updateSvgContentColor = (widgetType: WidgetType, fillColor: string) => {
-            return sections.map(section => {
-                if (section.widgetType === widgetType) {
-                    return {
-                        ...section,
-                        widgetList: section.widgetList.map(widget => {
-                            const parser = new DOMParser();
-                            const xmlDoc = parser.parseFromString(widget.svgRaw, "image/svg+xml");
-                            const paths = xmlDoc.querySelectorAll('path');
-                            paths.forEach(path => {
-                                // Update fill color
-                                path.setAttribute('fill', fillColor);
-                            });
-                            const serializer = new XMLSerializer();
-                            return {
-                                ...widget,
-                                svgRaw: serializer.serializeToString(xmlDoc.documentElement),
-                            };
-                        })
-                    };
-                }
-                return section;
-            });
-        };
-
-        // Updating SVGs whenever avatarOption changes
-        const updatedSections = sections.map(section => {
-            return {
-                ...section,
-                widgetList: section.widgetList.map(widget => {
-                    if (avatarOption.widgets?.[section.widgetType]?.fillColor) {
-                        const parser = new DOMParser();
-                        const xmlDoc = parser.parseFromString(widget.svgRaw, "image/svg+xml");
-                        const paths = xmlDoc.querySelectorAll('path');
-                        paths.forEach(path => {
-                            const fillColor = avatarOption.widgets[section.widgetType]?.fillColor ?? '';
-                            path.setAttribute('fill', fillColor);
-                        });
-                        const serializer = new XMLSerializer();
-                        return {
-                            ...widget,
-                            svgRaw: serializer.serializeToString(xmlDoc.documentElement),
-                        };
-                    }
-                    return widget;
-                })
-            };
-        });
-        setSections(updatedSections);
-
-    }, [avatarOption, sections]);
-
+    }, [sections]);
 
     const onSetWidgetColor = (widgetType: WidgetType, fillColor: string) => {
         if (avatarOption.widgets?.[widgetType]) {
@@ -161,14 +123,10 @@ const Scrollbar = (props: IProps) => {
         }
     }
 
-    const getWidgetColor = (type: string) => {
-        if (
-            type === WidgetType.Face ||
-            type === WidgetType.Hair
-        ) {
-            return avatarOption.widgets[type]?.fillColor
-        } else return ''
-    }
+    const getWidgetColor = (type: string) => (
+        (type === WidgetType.Face || type === WidgetType.Hair) ? avatarOption.widgets[type]?.fillColor : ''
+    );
+
     if (!sections) {
         return null;
     }
@@ -215,7 +173,7 @@ const Scrollbar = (props: IProps) => {
                                         onClick={() => onSetSwitchWidget(s.widgetType, it.widgetShape)}
                                         dangerouslySetInnerHTML={{ __html: it.svgRaw }}
                                     />
-                                        
+
                                 )
                             })}
                         </ul>
