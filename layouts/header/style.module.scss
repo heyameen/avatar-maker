@@ -9,7 +9,7 @@
   .siteTitle {
     margin-left: 1rem;
     font-weight: bold;
-    font-size: 1.9rem;
+    font-size: 1.5rem;
     cursor: default;
 
     @media screen and (max-width: $screen-sm) {
@@ -32,13 +32,13 @@
       color: $color-text;
       font-weight: bold;
       font-size: 1.05rem;
-      background-color: $color-dark;
+      background-color: $color-gray;
       border-radius: 0.6rem;
       cursor: pointer;
       user-select: none;
 
       &:hover {
-        background-color: darken($color-dark, 3%);
+        background-color: darken($color-gray, 3%);
       }
 
       .text {

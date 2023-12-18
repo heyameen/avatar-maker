@@ -5,7 +5,7 @@ import styles from './style.module.scss'
 const Header = () => {
     return (
         <header className={styles.header}>
-            <h5>Logo</h5>
+            <Image src="/logo.png" alt="logo" width="80" height="80"/>
 
             <h2 className={styles.siteTitle}>Avatar Maker</h2>
 
