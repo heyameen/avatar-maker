@@ -41,6 +41,7 @@ const Avatar = (props: AvatarProps) => {
 
             const svgRawList = await Promise.all(promises);
             let skinColor: string | undefined;
+            let hairColor: string | undefined;
 
             const svgElements = svgRawList.map((svgContent, i) => {
                 if (!svgContent) {
@@ -54,6 +55,10 @@ const Avatar = (props: AvatarProps) => {
                     skinColor = widgetFillColor;
                 }
 
+                if (widgetType === WidgetType.Hair) {
+                    hairColor = widgetFillColor
+                }
+
                 const isFaceWidget = sortedList[i][0] === WidgetType.Face;
                 const isCurlyShort = avatarOption.widgets.hair?.shape === 'curlyShort'
 
@@ -64,7 +69,8 @@ const Avatar = (props: AvatarProps) => {
                 const svgXmlContent = svgContent
                     .slice(svgContent.indexOf('>', svgContent.indexOf('<svg')) + 1)
                     .replace('</svg>', '')
-                    .replaceAll(/\$fillColor/g, skinColor || 'transparent');
+                    .replaceAll(/\$fillColor/g, skinColor || 'transparent')
+                    .replaceAll(/\$hairColor/g, hairColor || 'transparent');
 
                 const transformFace = isFaceWidget ? `transform="${faceTransform}"` : '';
                 const transformHair = isCurlyShort ? `transform="${hairTransform}"` : '';
