@@ -75,3 +75,20 @@ export interface AppActions {
   undo: () => void;
   redo: () => void;
 }
+
+export type OriginalVariations = {
+  [color: string]: number;
+};
+
+export type ModifiedColors = {
+  [color: string]: string;
+};
+
+export type ColorVariations = {
+  baseColor: string;
+  variations: { [color: string]: number };
+};
+
+export type AnalysisCache = {
+    [key: string]: ColorVariations;
+};
