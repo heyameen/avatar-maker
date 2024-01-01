@@ -25,12 +25,12 @@ const ColorList = (props: IProps) => {
     }
 
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const randomBgColor = getRandomValue(SETTINGS.backgroundColor)
-            setSelectedBgColor(randomBgColor);
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (typeof window !== 'undefined') {
+    //         const randomBgColor = getRandomValue(SETTINGS.backgroundColor)
+    //         setSelectedBgColor(randomBgColor);
+    //     }
+    // }, []);
 
 
     return (

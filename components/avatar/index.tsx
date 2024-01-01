@@ -3,6 +3,7 @@ import { Background } from '@/components';
 import { WidgetShape, WidgetType, WrapperShape } from '@/enums';
 import { AvatarOption, Widget } from '@/types';
 import { AVATAR_LAYER, NONE } from '@/constants';
+import { analyzeSVGColors, applyDynamicVariations, svgAnalysisCache } from '@/utils';
 import { widgetData } from '@/utils/assets-data';
 import styles from './style.module.scss';
 
@@ -43,13 +44,32 @@ const Avatar = (props: AvatarProps) => {
             let skinColor: string | undefined;
             let hairColor: string | undefined;
 
+
+
             const svgElements = svgRawList.map((svgContent, i) => {
                 if (!svgContent) {
                     return '';
                 }
+                const isFaceWidget = sortedList[i][0] === WidgetType.Face;
+                
+                // translate(175, 243) translate(138, 233)
+                const faceTransform = isFaceWidget ? `translate(138, 233)` : '';
+                // const hairTransform = 'isFroBun' ? 'translate(20, -95)' : '';
+                // const curlYbOB = 'isCurlyBob' ? 'translate(-55, 20)' : '';                
+
+                const transformFace = isFaceWidget ? `transform="${faceTransform}"` : '';
+                // const transformHair = isCurlyShort ? `transform="${hairTransform}"` : '';
 
                 const [widgetType, widget] = sortedList[i];
                 let widgetFillColor = widget.fillColor;
+
+                let svgIdentifier = `avatar-${widgetType}-${widget.shape}-${widget.fillColor}`;
+                
+                if ((!svgAnalysisCache[svgIdentifier] || widget.fillColor !== avatarOption.widgets[widgetType]?.fillColor) && widgetType === WidgetType.Hair) {
+                    console.log('SVG IDENTIFIER', svgIdentifier)
+                    svgAnalysisCache[svgIdentifier] = analyzeSVGColors(svgContent);
+                }
+
 
                 if (widgetType === WidgetType.Face) {
                     skinColor = widgetFillColor;
@@ -57,27 +77,25 @@ const Avatar = (props: AvatarProps) => {
 
                 if (widgetType === WidgetType.Hair) {
                     hairColor = widgetFillColor
+
+                    const { baseColor, variations } = svgAnalysisCache[svgIdentifier]
+                    let newColors = applyDynamicVariations(hairColor || baseColor, variations);
+
+                    let modifiedSVG = svgContent;
+                    Object.entries(newColors).forEach(([originalColor, newColor]) => {
+                        modifiedSVG = modifiedSVG.replace(new RegExp(originalColor, 'g'), newColor);
+                    });
+
+                    return `<g id="avatar-${sortedList[i][0]}" ${transformFace}>${modifiedSVG}</g>`;
                 }
-
-                const isFaceWidget = sortedList[i][0] === WidgetType.Face;
-                const isCurlyShort = avatarOption.widgets.hair?.shape === 'curlyShort'
-
-                const faceTransform = isFaceWidget ? 'translate(130, 230)' : '';
-                const hairTransform = 'isFroBun' ? 'translate(20, -95)' : '';
-                const curlYbOB = 'isCurlyBob' ? 'translate(-55, 20)' : '';                
 
                 const svgXmlContent = svgContent
                     .slice(svgContent.indexOf('>', svgContent.indexOf('<svg')) + 1)
                     .replace('</svg>', '')
                     .replaceAll(/\$fillColor/g, skinColor || 'transparent')
-                    .replaceAll(/\$hairColor/g, hairColor || 'transparent');
-
-                const transformFace = isFaceWidget ? `transform="${faceTransform}"` : '';
-                const transformHair = isCurlyShort ? `transform="${hairTransform}"` : '';
-
 
                 return `<g id="avatar-${sortedList[i][0]}" ${transformFace}>${svgXmlContent}</g>`;
-                
+
             });
 
             setSvgContent(`
@@ -87,7 +105,6 @@ const Avatar = (props: AvatarProps) => {
                     viewBox="0 0 ${avatarSize * 6.6} ${avatarSize * 6.6}"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="xMidYMid meet"
                 >
                     <g transform="translate(100, 95)"> 
                         ${svgElements.join('')}
@@ -95,6 +112,7 @@ const Avatar = (props: AvatarProps) => {
                 </svg>
             `);
         })();
+
     }, [avatarOption, avatarSize])
 
     const getWrapperShapeClassName = () => {
