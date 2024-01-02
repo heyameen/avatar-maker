@@ -77,7 +77,7 @@ export interface AppActions {
 }
 
 export type OriginalVariations = {
-  [color: string]: number;
+  [color: string]: { hue: number; saturation: number; lightness: number };
 };
 
 export type ModifiedColors = {
@@ -86,7 +86,9 @@ export type ModifiedColors = {
 
 export type ColorVariations = {
   baseColor: string;
-  variations: { [color: string]: number };
+  variations: {
+    [color: string]: { hue: number; saturation: number; lightness: number };
+  };
 };
 
 export type AnalysisCache = {

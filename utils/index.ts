@@ -157,65 +157,86 @@ export const initializeCollapsedState = () => {
   return false;
 };
 
-const isValidColor = (color: string): boolean => {
-  const invalidColors = ["none", "transparent", "inherit", "$fillcolor"];
-  console.log(
-    "isValidColors",
-    color,
-    !invalidColors.includes(color.toLowerCase())
-  );
-  return !invalidColors.includes(color.toLowerCase());
-};
-
 export const analyzeSVGColors = (svgContent: string): ColorVariations => {
   const uniqueColors = new Set<string>();
-
-  // Regex to find all fill attributes in SVG content
   const fillRegex = /fill=["']?([^"']+)["']?/g;
   let match: RegExpExecArray | null;
 
-  // Iterate over all fill attributes and add unique colors to the set
   while ((match = fillRegex.exec(svgContent)) !== null) {
-    // Add the color to the set if it's not a URL (gradient, etc.)
     if (!match[1].startsWith("url")) {
       uniqueColors.add(match[1]);
     }
   }
 
-  const colors = Array.from(uniqueColors).filter(isValidColor);
-
+  const colors = Array.from(uniqueColors).filter((color) =>
+    chroma.valid(color)
+  );
   if (colors.length === 0) {
     throw new Error("No valid colors found in SVG content.");
   }
 
   const baseColor = colors[0];
-  const variations: { [color: string]: number } = {};
+  const baseHSL = chroma(baseColor).hsl();
+  const variations: {
+    [color: string]: { hue: number; saturation: number; lightness: number };
+  } = {};
 
-  // Calculate variations relative to the base color
   colors.forEach((color) => {
-    const brightnessDifference =
-      chroma(color).luminance() - chroma(baseColor).luminance();
-    variations[color] = brightnessDifference;
+    const colorHSL = chroma(color).hsl();
+    variations[color] = {
+      hue: colorHSL[0] - baseHSL[0],
+      saturation: colorHSL[1] - baseHSL[1],
+      lightness: colorHSL[2] - baseHSL[2],
+    };
   });
 
   return { baseColor, variations };
 };
 
-export const createColorVariation = (baseColor: string, variation: number) => {
-  return chroma(baseColor)
-    .luminance(chroma(baseColor).luminance() + variation)
-    .hex();
+export const createColorVariation = (
+  baseColor: string,
+  variation: { hue: number; saturation: number; lightness: number }
+): string => {
+  try {
+    const baseHSL = chroma(baseColor).hsl();
+    const newHue = (baseHSL[0] + variation.hue) % 360;
+    const newSaturation = Math.max(
+      Math.min(baseHSL[1] + variation.saturation, 1),
+      0
+    ); // Clamp between 0 and 1
+    const newLightness = Math.max(
+      Math.min(baseHSL[2] + variation.lightness, 0.9),
+      0.1
+    ); // Avoid too dark or too light
+
+    return chroma.hsl(newHue, newSaturation, newLightness).hex();
+  } catch (error) {
+    console.error(`Error creating color variation for ${baseColor}:`, error);
+    return baseColor; // Fallback to base color on error
+  }
 };
+
+
 
 export const applyDynamicVariations = (
   baseColor: string,
   originalVariations: OriginalVariations
-) => {
+): ModifiedColors => {
   let modifiedColors: ModifiedColors = {};
   for (let [originalColor, variation] of Object.entries(originalVariations)) {
-    modifiedColors[originalColor] = createColorVariation(baseColor, variation);
+    if (chroma.valid(originalColor)) {
+      modifiedColors[originalColor] = createColorVariation(
+        baseColor,
+        variation
+      );
+    } else {
+      console.warn(`Invalid original color: ${originalColor}`);
+      modifiedColors[originalColor] = originalColor; // Preserve the original color if invalid
+    }
   }
+  console.log(`Modified COLORS`, modifiedColors)
   return modifiedColors;
 };
+
 
 export const svgAnalysisCache: AnalysisCache = {};
