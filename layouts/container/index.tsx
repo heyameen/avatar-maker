@@ -2,9 +2,12 @@
 
 import { useRef, useState } from 'react';
 import { AppState, AvatarOption } from '@/types'
+import Image from 'next/image';
 import { getRandomAvatarOption, getSpecialAvatarOption } from '@/utils';
 import { TRIGGER_PROBABILITY, NOT_COMPATIBLE_AGENTS, DOWNLOAD_DELAY } from '@/constants';
 import { Header, Footer } from '@/layouts';
+import Dice from '@/assets/icons/dice.svg';
+import Download from '@/assets/icons/download.svg';
 import styles from './style.module.scss';
 import { ActionBar, Avatar } from '@/components';
 import useStore from '@/store';
@@ -92,7 +95,8 @@ const Container = (props: IProps) => {
                                 className='action-btn action-randomize'
                                 onClick={onRandomAvatar}
                             >
-                                Random Avatar
+                                <Image src={Dice} alt="Dice icon to represent randomness" height={22} width={22} />
+                                <p style={{ marginLeft: ".5rem" }}>Random Avatar</p>
                             </button>
 
                             <button
@@ -100,10 +104,12 @@ const Container = (props: IProps) => {
                                 className='action-btn action-download'
                                 onClick={onDownload}
                             >
+                                <Image src={Download} alt="Download icon" height={20} width={20} />
+
                                 {
                                     downloading
-                                        ? 'Downloading'
-                                        : 'Download'
+                                        ? <p style={{ marginLeft: ".5rem" }}>Downloading</p>
+                                        : <p style={{ marginLeft: ".5rem" }}>Download</p>
                                 }
                             </button>
 

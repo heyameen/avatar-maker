@@ -53,6 +53,9 @@
     }
 
     .action-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       min-width: 6rem;
       height: 2.5rem;
       padding: 0 1rem;
