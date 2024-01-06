@@ -3,7 +3,7 @@ import { Background } from '@/components';
 import { WidgetShape, WidgetType, WrapperShape } from '@/enums';
 import { AvatarOption, Widget } from '@/types';
 import { AVATAR_LAYER, NONE } from '@/constants';
-import { analyzeSVGColors, applyDynamicVariations, applyDynamicVariationsDOM, svgAnalysisCache } from '@/utils';
+import { analyzeSVGColors, applyDynamicVariationsDOM, svgAnalysisCache } from '@/utils';
 import { widgetData } from '@/utils/assets-data';
 import styles from './style.module.scss';
 
