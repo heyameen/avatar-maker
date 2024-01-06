@@ -3,7 +3,7 @@ import { Background } from '@/components';
 import { WidgetShape, WidgetType, WrapperShape } from '@/enums';
 import { AvatarOption, Widget } from '@/types';
 import { AVATAR_LAYER, NONE } from '@/constants';
-import { analyzeSVGColors, applyDynamicVariations, svgAnalysisCache } from '@/utils';
+import { analyzeSVGColors, applyDynamicVariationsDOM, svgAnalysisCache } from '@/utils';
 import { widgetData } from '@/utils/assets-data';
 import styles from './style.module.scss';
 
@@ -77,16 +77,9 @@ const Avatar = (props: AvatarProps) => {
 
                 if (widgetType === WidgetType.Hair) {
                     hairColor = widgetFillColor
-
-                    const { baseColor, variations } = svgAnalysisCache[svgIdentifier]
-                    let newColors = applyDynamicVariations(hairColor || baseColor, variations);
-
-                    let modifiedSVG = svgContent;
-                    Object.entries(newColors).forEach(([originalColor, newColor]) => {
-                        modifiedSVG = modifiedSVG.replace(new RegExp(originalColor, 'g'), newColor);
-                    });
-
-                    return `<g id="avatar-${sortedList[i][0]}" ${transformFace}>${modifiedSVG}</g>`;
+                    const { baseColor, variations } = svgAnalysisCache[svgIdentifier];
+                    let newColors = applyDynamicVariationsDOM(svgContent, hairColor || baseColor, variations);
+                    return `<g id="avatar-${sortedList[i][0]}" ${transformFace}>${newColors}</g>`;
                 }
 
                 const svgXmlContent = svgContent

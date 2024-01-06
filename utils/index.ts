@@ -193,50 +193,89 @@ export const analyzeSVGColors = (svgContent: string): ColorVariations => {
   return { baseColor, variations };
 };
 
-export const createColorVariation = (
+const createColorVariation = (
   baseColor: string,
   variation: { hue: number; saturation: number; lightness: number }
 ): string => {
-  try {
-    const baseHSL = chroma(baseColor).hsl();
-    const newHue = (baseHSL[0] + variation.hue) % 360;
-    const newSaturation = Math.max(
-      Math.min(baseHSL[1] + variation.saturation, 1),
-      0
-    ); // Clamp between 0 and 1
-    const newLightness = Math.max(
-      Math.min(baseHSL[2] + variation.lightness, 0.9),
-      0.1
-    ); // Avoid too dark or too light
+  let color = chroma(baseColor);
+  let currentHue = color.get("hsl.h");
+  let currentSaturation = color.get("hsl.s");
+  let currentLightness = color.luminance();
 
-    return chroma.hsl(newHue, newSaturation, newLightness).hex();
-  } catch (error) {
-    console.error(`Error creating color variation for ${baseColor}:`, error);
-    return baseColor; // Fallback to base color on error
+  if (variation.hue !== null && !isNaN(variation.hue)) {
+    let newHue = (currentHue + variation.hue + 360) % 360;
+    color = color.set("hsl.h", newHue);
   }
+
+  if (variation.saturation !== null && !isNaN(variation.saturation)) {
+    let newSaturation = Math.min(
+      Math.max(currentSaturation + variation.saturation * 0.5, 0),
+      0.95
+    );
+    color = color.set("hsl.s", newSaturation);
+  }
+
+  if (variation.lightness !== null && !isNaN(variation.lightness)) {
+    let newLightness = Math.max(
+      currentLightness + variation.lightness * 0.5,
+      0.3
+    );
+    newLightness = Math.min(newLightness, 1);
+    color = color.luminance(newLightness);
+  }
+
+  console.log(`New color: ${color.hex()}`);
+  return color.hex();
 };
 
-
-
-export const applyDynamicVariations = (
+export const applyDynamicVariationsDOM = (
+  svgContent: string,
   baseColor: string,
   originalVariations: OriginalVariations
-): ModifiedColors => {
-  let modifiedColors: ModifiedColors = {};
-  for (let [originalColor, variation] of Object.entries(originalVariations)) {
-    if (chroma.valid(originalColor)) {
-      modifiedColors[originalColor] = createColorVariation(
-        baseColor,
-        variation
-      );
-    } else {
-      console.warn(`Invalid original color: ${originalColor}`);
-      modifiedColors[originalColor] = originalColor; // Preserve the original color if invalid
-    }
-  }
-  console.log(`Modified COLORS`, modifiedColors)
-  return modifiedColors;
-};
+) => {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(svgContent, "image/svg+xml");
+  const svg = xmlDoc.getElementsByTagName("svg")[0];
 
+  // Function to apply colors recursively
+  const applyColors = (element: Element) => {
+    const fill = element.getAttribute("fill");
+
+    if (fill && chroma.valid(fill)) {
+      const variation = originalVariations[fill];
+      if (variation) {
+        const newColor = createColorVariation(baseColor, variation);
+        console.log(
+          `Element: ${element.tagName}, Old color: ${fill}, New color: ${newColor}`
+        );
+
+        element.setAttribute("fill", newColor);
+      }
+    }
+
+    // Recursively apply colors to children
+    for (const child of element.children) {
+      applyColors(child);
+    }
+  };
+
+  applyColors(svg);
+
+  const masks = svg.querySelectorAll("mask");
+  masks.forEach((mask) => {
+    const maskId = mask.id;
+    const maskedElements = svg.querySelectorAll(`[mask="url(#${maskId})"]`);
+
+    maskedElements.forEach((elem) => {
+      if (chroma.valid(baseColor)) {
+        elem.setAttribute("fill", baseColor);
+      }
+    });
+  });
+
+  // Serialize the updated SVG back to a string
+  const serializer = new XMLSerializer();
+  return serializer.serializeToString(svg);
+};
 
 export const svgAnalysisCache: AnalysisCache = {};
