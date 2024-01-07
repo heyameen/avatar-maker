@@ -172,6 +172,8 @@ const Scrollbar = (props: IProps) => {
                                         className={`${styles.listItem} ${it.widgetShape === avatarOption.widgets?.[s.widgetType]?.shape ? styles.selected : ''}`}
                                         onClick={() => onSetSwitchWidget(s.widgetType, it.widgetShape)}
                                         dangerouslySetInnerHTML={{ __html: it.svgRaw }}
+                                        title={it.widgetShape}
+
                                     />
 
                                 )
